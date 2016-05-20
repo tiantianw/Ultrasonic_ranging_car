@@ -1,6 +1,6 @@
-#include <Servo.h>    
-#include "U8glib.h"   
-U8GLIB_SSD1306_128X64 u8g(0, 1, 2, 3, 7); 
+#include <Servo.h>
+#include "U8glib.h"
+U8GLIB_SSD1306_128X64 u8g(0, 1, 2, 3, 7);
 
 int IN4 = 8;   // IN4
 int IN3 = 9;   //IN3
@@ -9,15 +9,15 @@ int IN2 = 10;  // IN2
 int IN1 = 11;  // IN1
 
 int inputPin = 13;  // 超音波
-int outputPin = 12; 
+int outputPin = 12;
 
 float Fdistance = 0;      // 前方的障碍物距离
-float Rdistance = 0;     
-float Ldistance = 0;      
+float Rdistance = 0;
+float Ldistance = 0;
 
-int directionn = 0;   
+int directionn = 0;
 
-Servo myservo;        
+Servo myservo;
 
 int delay_time = 250;
 
@@ -30,8 +30,8 @@ float distance;
 
 void setup()
 {
-  // Serial.begin(9600);     
-  pinMode(IN4, OUTPUT); 
+  // Serial.begin(9600);
+  pinMode(IN4, OUTPUT);
   pinMode(IN3, OUTPUT);
   pinMode(IN2, OUTPUT);
   pinMode(IN1, OUTPUT);
@@ -39,40 +39,40 @@ void setup()
   pinMode(MotorA, OUTPUT);
   pinMode(MotorB, OUTPUT);
 
-  pinMode(inputPin, INPUT);    
-  pinMode(outputPin, OUTPUT); 
+  pinMode(inputPin, INPUT);
+  pinMode(outputPin, OUTPUT);
 
-  myservo.attach(4);    
+  myservo.attach(4);
 }
 
-void advance(int a)    
+void advance(int a)
 {
   digitalWrite(IN2, LOW);
   digitalWrite(IN1, HIGH);
   digitalWrite(IN4, LOW);
   digitalWrite(IN3, HIGH);
-  delay(a * 100);    
+  delay(a * 100);
 }
 
-void turnR(int d)       
+void turnR(int d)
 {
-  digitalWrite(IN2, HIGH); 
+  digitalWrite(IN2, HIGH);
   digitalWrite(IN1, LOW);
   digitalWrite(IN4, LOW);
-  digitalWrite(IN3, HIGH); 
+  digitalWrite(IN3, HIGH);
   delay(d * 50);
 }
 
-void turnL(int e)       
+void turnL(int e)
 {
   digitalWrite(IN2, LOW);
-  digitalWrite(IN1, HIGH);  
-  digitalWrite(IN4, HIGH);  
+  digitalWrite(IN1, HIGH);
+  digitalWrite(IN4, HIGH);
   digitalWrite(IN3, LOW);
   delay(e * 50);
 }
 
-void stopp(int f)         
+void stopp(int f)
 {
   digitalWrite(IN2, HIGH);
   digitalWrite(IN1, HIGH);
@@ -81,7 +81,7 @@ void stopp(int f)
   delay(f * 100);
 }
 
-void back(int g)         
+void back(int g)
 {
   digitalWrite(IN2, HIGH);
   digitalWrite(IN1, LOW);
@@ -91,15 +91,18 @@ void back(int g)
 }
 
 void detection()        //测量3個角度(5.90.177)
-{ delay_time = 250;   // 舵机转向后的稳定时间
+{
+  delay_time = 250;   // 舵机转向后的稳定时间
   ask_pin_F();            // 读取前方的距离
 
   if (Fdistance < 20)        // 假如前方距离小于10cm
-  { stopp(1);               // 停止0.1秒
+  {
+    stopp(1);               // 停止0.1秒
     back(2);                // 后退 0.2秒
   }
   if (Fdistance < 35)        // 假如前方距离小于25cm
-  { stopp(1);               // 停止0.1秒
+  {
+    stopp(1);               // 停止0.1秒
     ask_pin_L();            // 读取左边的距离
     delay(delay_time);      // 等待舵机稳定
     ask_pin_R();            // 读取右边的距离
@@ -110,15 +113,18 @@ void detection()        //测量3個角度(5.90.177)
     }
 
     if (Ldistance <= Rdistance)  //假如右边距离大于等于左边的距离
-    { directionn = Rgo;      //向右边走
+    {
+      directionn = Rgo;      //向右边走
     }
 
     if (Ldistance < 20 && Rdistance < 20)   //假如左边距离和右边距离都小于10CM
-    { directionn = Bgo;      //向后退
+    {
+      directionn = Bgo;      //向后退
     }
   }
   else                      //假如前方大于25CM
-  { directionn = Fgo;        //向前走
+  {
+    directionn = Fgo;        //向前走
   }
 
 }
@@ -152,11 +158,11 @@ void ask_pin_R()   // 量出右边距离
 
 float Sonar()
 {
-  digitalWrite(outputPin, LOW);   
+  digitalWrite(outputPin, LOW);
   delayMicroseconds(2);
-  digitalWrite(outputPin, HIGH); 
+  digitalWrite(outputPin, HIGH);
   delayMicroseconds(10);
-  digitalWrite(outputPin, LOW);  
+  digitalWrite(outputPin, LOW);
   distance = pulseIn(inputPin, HIGH);
   distance = distance / 58; // 将时间转为距离值（单位：厘米）
   return distance;
